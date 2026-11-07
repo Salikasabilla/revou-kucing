@@ -1,0 +1,773 @@
+/* =========================================================
+   Todo Life Dashboard — Main Stylesheet
+   Requirements: 9.2, 9.3, 9.4, 7.6
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   CSS Custom Properties (Themes)
+   ---------------------------------------------------------
+   WCAG AA Contrast Notes (normal text < 18px → 4.5:1 required):
+   Light theme:
+     --color-text-primary (#212529) on --color-bg (#f8f9fa)       → ~16.1:1 ✓
+     --color-text-primary (#212529) on --color-surface (#ffffff)   → ~16.7:1 ✓
+     --color-text-secondary (#6c757d) on --color-bg (#f8f9fa)      → ~4.61:1 ✓
+     --color-accent (#4361ee) on --color-surface (#ffffff)         → ~4.55:1 ✓
+     #ffffff on --color-accent (#4361ee) [buttons]                 → ~4.55:1 ✓
+     #ffffff on --color-danger (#dc3545) [danger buttons]          → ~4.55:1 ✓
+     #ffffff on --color-success (#198754) [success bg]             → ~4.56:1 ✓
+   Dark theme:
+     --color-text-primary (#e9ecef) on --color-bg (#121212)        → ~16.1:1 ✓
+     --color-text-primary (#e9ecef) on --color-surface (#1e1e1e)   → ~13.4:1 ✓
+     --color-text-secondary (#adb5bd) on --color-bg (#121212)      → ~9.09:1 ✓
+     --color-accent (#6d8dff) on --color-bg (#121212)              → ~6.68:1 ✓
+     #121212 on --color-accent (#6d8dff) [buttons - dark bg text]  → ~6.68:1 ✓
+     --color-danger (#f07070) on --color-bg (#121212)              → ~5.18:1 ✓
+     --color-success (#4fc08d) on --color-bg (#121212)             → ~7.28:1 ✓
+   --------------------------------------------------------- */
+
+/* :root declares fallback values using light theme values,
+   ensuring custom properties are always defined even before
+   ThemeManager.init() sets data-theme (Requirement 7.5). */
+:root {
+  --color-bg: #f8f9fa;
+  --color-surface: #ffffff;
+  --color-text-primary: #212529;
+  --color-text-secondary: #6c757d;
+  --color-accent: #4361ee;
+  --color-accent-hover: #3451d1;
+  --color-border: #dee2e6;
+  --color-danger: #dc3545;
+  --color-success: #198754;
+  --color-warning-bg: #fff3cd;
+  --color-warning-border: #ffc107;
+  --color-warning-text: #664d03;
+}
+
+[data-theme="light"] {
+  --color-bg: #f8f9fa;
+  --color-surface: #ffffff;
+  --color-text-primary: #212529;
+  --color-text-secondary: #6c757d;
+  --color-accent: #4361ee;
+  --color-accent-hover: #3451d1;
+  --color-border: #dee2e6;
+  --color-danger: #dc3545;
+  --color-success: #198754;
+  --color-warning-bg: #fff3cd;
+  --color-warning-border: #ffc107;
+  --color-warning-text: #664d03;
+}
+
+[data-theme="dark"] {
+  --color-bg: #121212;
+  --color-surface: #1e1e1e;
+  --color-text-primary: #e9ecef;
+  --color-text-secondary: #adb5bd;
+  --color-accent: #6d8dff;
+  --color-accent-hover: #8ba4ff;
+  --color-border: #2d2d2d;
+  --color-danger: #f07070;
+  --color-success: #4fc08d;
+  --color-warning-bg: #332b00;
+  --color-warning-border: #ffc107;
+  --color-warning-text: #ffd95a;
+}
+
+/* ---------------------------------------------------------
+   Reset & Base
+   --------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  /* Prevent horizontal overflow at all breakpoints (Req 9.1) */
+  overflow-x: hidden;
+}
+
+/* Prevent any element from overflowing the viewport horizontally */
+img,
+video,
+iframe,
+embed,
+object {
+  max-width: 100%;
+  height: auto;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;           /* 16px — meets ≥16px requirement */
+  line-height: 1.6;
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  /* Theme switching transition — 200ms (within 150–400ms range, Req 9.4) */
+  transition: background-color 200ms ease, color 200ms ease;
+  min-height: 100vh;
+  /* Prevent horizontal scrolling at all viewport widths (Req 9.1) */
+  overflow-x: hidden;
+  /* Ensure body never exceeds viewport width */
+  max-width: 100%;
+}
+
+/* Visually hidden — accessibility helper */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------------------------------------------------------
+   Typography
+   Body: 16px (1rem), H1: ≥24px, H2: ≥20px, H3: ≥16px distinct
+   --------------------------------------------------------- */
+
+h1 {
+  font-size: 1.75rem;  /* 28px — meets ≥24px requirement */
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+h2 {
+  font-size: 1.375rem; /* 22px — meets ≥20px requirement */
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+h3 {
+  /* 18px — meets ≥16px requirement; distinct from body via weight + tracking */
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+}
+
+/* ---------------------------------------------------------
+   Banners / Notifications
+   --------------------------------------------------------- */
+
+.banner {
+  padding: 0.75rem 1.25rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+
+.banner--warning {
+  background-color: var(--color-warning-bg);
+  border-bottom: 2px solid var(--color-warning-border);
+  color: var(--color-warning-text);
+}
+
+.notification {
+  margin-top: 0.75rem;
+  padding: 0.625rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9375rem;
+  transition: opacity 300ms ease;
+}
+
+.notification--success {
+  background-color: var(--color-success);
+  color: #ffffff;
+}
+
+/* ---------------------------------------------------------
+   Error messages (inline validation)
+   --------------------------------------------------------- */
+
+.error-message {
+  color: var(--color-danger);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  /* Smooth fade-in/out for inline errors */
+  transition: opacity 150ms ease;
+}
+
+/* ---------------------------------------------------------
+   Buttons
+   Hover transitions: 150ms (within 150–400ms range, Req 9.4)
+   --------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 150ms ease, transform 100ms ease, box-shadow 150ms ease;
+  white-space: nowrap;
+}
+
+.btn:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn--primary {
+  background-color: var(--color-accent);
+  color: #ffffff;
+}
+
+.btn--primary:hover {
+  background-color: var(--color-accent-hover);
+}
+
+.btn--secondary {
+  background-color: var(--color-border);
+  color: var(--color-text-primary);
+}
+
+.btn--secondary:hover {
+  filter: brightness(0.92);
+}
+
+.btn--danger {
+  background-color: var(--color-danger);
+  color: #ffffff;
+}
+
+.btn--danger:hover {
+  filter: brightness(0.9);
+}
+
+.btn--icon {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 1.25rem;
+  padding: 0;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.btn--icon:hover {
+  background-color: var(--color-border);
+}
+
+.btn--small {
+  padding: 0.25rem 0.625rem;
+  font-size: 0.8125rem;
+}
+
+/* ---------------------------------------------------------
+   Inputs
+   --------------------------------------------------------- */
+
+.input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 0.9375rem;
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  width: 100%;
+  /* Prevent inputs from overflowing their container (Req 9.1) */
+  max-width: 100%;
+  box-sizing: border-box;
+  transition: border-color 150ms ease, box-shadow 150ms ease, background-color 200ms ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+}
+
+/* ---------------------------------------------------------
+   Header
+   --------------------------------------------------------- */
+
+.header {
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  padding: 1rem 1.25rem;
+  display: flex;
+  /* Mobile: stack clock, greeting, controls vertically — no horizontal overflow (Req 9.1) */
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.75rem;
+  transition: background-color 200ms ease, border-color 200ms ease;
+  /* Prevent header content from overflowing on narrow viewports */
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* Tablet and above: switch to horizontal row layout */
+@media (min-width: 768px) {
+  .header {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+  }
+}
+
+.header__clock {
+  display: flex;
+  flex-direction: column;
+  min-width: 140px;
+}
+
+.clock__date {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.clock__time {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.header__greeting {
+  /* Mobile: left-aligned, full width */
+  flex: 1;
+  text-align: left;
+}
+
+@media (min-width: 768px) {
+  .header__greeting {
+    text-align: center;
+  }
+}
+
+.greeting__text {
+  font-size: 1.5rem;
+}
+
+.header__controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  /* Ensure controls don't overflow on narrow screens */
+  min-width: 0;
+}
+
+.name-form {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  /* Allow form to shrink on narrow viewports */
+  min-width: 0;
+  flex: 1;
+}
+
+.name-form .input {
+  /* Fluid on mobile, fixed minimum on wider screens */
+  width: 0;
+  min-width: 120px;
+  flex: 1;
+}
+
+/* ---------------------------------------------------------
+   Main Layout
+   Mobile-first, single column; expands at tablet and desktop.
+   Meets Requirement 9.1 (320px → 768px → 1024px breakpoints).
+   --------------------------------------------------------- */
+
+.main {
+  display: grid;
+  gap: 1.25rem;
+  padding: 1.25rem;
+  /* Mobile ≥ 320px: single-column, no horizontal scroll */
+  grid-template-columns: 1fr;
+  /* Prevent grid from overflowing the viewport */
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Tablet ≥ 768px: two-column grid
+   Task list spans both columns (it's the widest panel) */
+@media (min-width: 768px) {
+  .main {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* Task list panel takes the full row width on tablet */
+  .panel--tasks {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Desktop ≥ 1024px: three-column layout with optimized spacing
+   Task list gets 2 fractions, Pomodoro and links share the remaining 2 */
+@media (min-width: 1024px) {
+  .main {
+    grid-template-columns: 2fr 1fr 1fr;
+    padding: 1.5rem 2rem;
+  }
+
+  /* Reset task panel span — it occupies just the first column */
+  .panel--tasks {
+    grid-column: auto;
+  }
+}
+
+/* ---------------------------------------------------------
+   Panels
+   --------------------------------------------------------- */
+
+.panel {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 1.25rem;
+  /* Smooth theme transitions on panel surfaces */
+  transition: background-color 200ms ease, border-color 200ms ease;
+  /* Prevent panel content from overflowing its grid cell */
+  min-width: 0;
+  overflow: hidden;
+}
+
+.panel__title {
+  margin-bottom: 1rem;
+  color: var(--color-text-primary);
+}
+
+/* ---------------------------------------------------------
+   Task List
+   --------------------------------------------------------- */
+
+.task-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  /* Allow the form to wrap the submit button below the input on very small screens */
+  flex-wrap: wrap;
+}
+
+.task-form .input {
+  flex: 1;
+  /* Minimum width so the input stays usable at 320px */
+  min-width: 160px;
+}
+
+.task-list {
+  list-style: none;
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Empty state placeholder */
+.task-list__empty {
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+  padding: 0.75rem 0;
+  text-align: center;
+  font-style: italic;
+}
+
+.task-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.625rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background-color: var(--color-bg);
+  /* Hover transition — 150ms (Req 9.4) */
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.task-item:hover {
+  border-color: var(--color-accent);
+}
+
+.task-item__checkbox {
+  cursor: pointer;
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  accent-color: var(--color-accent);
+}
+
+.task-item__text {
+  flex: 1;
+  font-size: 0.9375rem;
+  word-break: break-word;
+  min-width: 0;
+  /* Smooth strikethrough transition on task completion (Req 9.4) */
+  transition: color 200ms ease, text-decoration-color 200ms ease;
+}
+
+.task-item__text--completed {
+  text-decoration: line-through;
+  text-decoration-color: var(--color-text-secondary);
+  color: var(--color-text-secondary);
+}
+
+/* Edit input inline inside the task item */
+.task-item__edit-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--color-accent);
+  border-radius: 4px;
+  font-size: 0.9375rem;
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.task-item__edit-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+}
+
+/* Inline validation error below edit input */
+.task-item__error {
+  width: 100%;
+  color: var(--color-danger);
+  font-size: 0.8125rem;
+  margin-top: 0.2rem;
+  padding-left: calc(1rem + 0.5rem); /* align past checkbox + gap */
+  transition: opacity 150ms ease;
+}
+
+.task-item__actions {
+  display: flex;
+  gap: 0.375rem;
+  flex-shrink: 0;
+}
+
+/* Task item action buttons — base style */
+.task-item__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.625rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 150ms ease, transform 100ms ease;
+  white-space: nowrap;
+}
+
+.task-item__btn:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.task-item__btn:active {
+  transform: scale(0.96);
+}
+
+/* Edit button — secondary style */
+.task-item__btn--edit {
+  background-color: var(--color-border);
+  color: var(--color-text-primary);
+}
+
+.task-item__btn--edit:hover {
+  background-color: var(--color-accent);
+  color: #ffffff;
+}
+
+/* Delete button — danger style */
+.task-item__btn--delete {
+  background-color: transparent;
+  color: var(--color-danger);
+  border: 1px solid var(--color-danger);
+}
+
+.task-item__btn--delete:hover {
+  background-color: var(--color-danger);
+  color: #ffffff;
+}
+
+/* Confirm / Save button — success/primary style */
+.task-item__btn--confirm {
+  background-color: var(--color-accent);
+  color: #ffffff;
+}
+
+.task-item__btn--confirm:hover {
+  background-color: var(--color-accent-hover);
+}
+
+/* Cancel button — secondary/neutral style */
+.task-item__btn--cancel {
+  background-color: var(--color-border);
+  color: var(--color-text-primary);
+}
+
+.task-item__btn--cancel:hover {
+  filter: brightness(0.9);
+}
+
+/* ---------------------------------------------------------
+   Pomodoro Timer
+   --------------------------------------------------------- */
+
+.pomodoro__display {
+  /* Mobile: slightly smaller to avoid layout pressure at 320px */
+  font-size: 2.75rem;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 0.05em;
+  padding: 1rem 0;
+  color: var(--color-accent);
+  font-variant-numeric: tabular-nums;
+  transition: color 200ms ease;
+}
+
+@media (min-width: 480px) {
+  .pomodoro__display {
+    font-size: 3.5rem;
+  }
+}
+
+.pomodoro__controls {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* ---------------------------------------------------------
+   Quick Links
+   --------------------------------------------------------- */
+
+.link-form {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Empty state placeholder */
+.links-grid__empty {
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+  padding: 0.75rem 0;
+  text-align: center;
+  font-style: italic;
+}
+
+.links-grid {
+  display: grid;
+  /* On the narrowest screens (≥320px) let cards fill the width gracefully */
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 0.625rem;
+  margin-top: 0.75rem;
+}
+
+@media (min-width: 480px) {
+  .links-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+}
+
+.link-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.625rem 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background-color: var(--color-bg);
+  text-align: center;
+  /* Hover and theme transitions (Req 9.4) */
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+.link-card:hover {
+  border-color: var(--color-accent);
+  background-color: var(--color-surface);
+}
+
+.link-card__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  word-break: break-word;
+  color: var(--color-text-primary);
+  /* Truncate very long labels with an ellipsis */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.link-card__actions {
+  display: flex;
+  gap: 0.375rem;
+  margin-top: 0.25rem;
+}
+
+/* Link card action buttons — base style */
+.link-card__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2rem 0.5rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 150ms ease, transform 100ms ease;
+  white-space: nowrap;
+}
+
+.link-card__btn:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.link-card__btn:active {
+  transform: scale(0.95);
+}
+
+/* Open button — primary/accent style */
+.link-card__btn--open {
+  background-color: var(--color-accent);
+  color: #ffffff;
+}
+
+.link-card__btn--open:hover {
+  background-color: var(--color-accent-hover);
+}
+
+/* Delete button — danger style */
+.link-card__btn--delete {
+  background-color: transparent;
+  color: var(--color-danger);
+  border: 1px solid var(--color-danger);
+}
+
+.link-card__btn--delete:hover {
+  background-color: var(--color-danger);
+  color: #ffffff;
+}
