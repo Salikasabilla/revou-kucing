@@ -64,8 +64,8 @@ Build a single-page dashboard using HTML5, CSS3, and Vanilla JavaScript followin
     - Test: `formatTime` zero-pads single-digit hours, minutes, and seconds (e.g., `09:05:03`)
     - _Requirements: 1.7, 1.8, 1.9_
 
-- [ ] 5. Implement GreetingDisplay
-  - [-] 5.1 Implement `GreetingDisplay` with `init()`, `render()`, `getGreeting(hour)`, and `updateName(name)` methods
+- [x] 5. Implement GreetingDisplay
+  - [x] 5.1 Implement `GreetingDisplay` with `init()`, `render()`, `getGreeting(hour)`, and `updateName(name)` methods
     - `getGreeting(hour)` maps: 5–11 → "Selamat Pagi", 12–14 → "Selamat Siang", 15–17 → "Selamat Sore", 18–23 and 0–4 → "Selamat Malam"
     - `render()` reads the current hour, calls `getGreeting()`, reads the stored name from `StorageManager`, and builds the final string (appends `", " + name + "!"` when a name exists)
     - `init()` calls `render()`
@@ -93,8 +93,8 @@ Build a single-page dashboard using HTML5, CSS3, and Vanilla JavaScript followin
     - Test: empty/whitespace name submission removes the greeting name
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 6.3_
 
-- [ ] 6. Implement TaskList
-  - [~] 6.1 Implement `TaskList.init()`, `render()`, `persist()`, and `normalize(text)` / `isDuplicate(normalizedText, excludeId?)` helpers
+- [x] 6. Implement TaskList
+  - [x] 6.1 Implement `TaskList.init()`, `render()`, `persist()`, and `normalize(text)` / `isDuplicate(normalizedText, excludeId?)` helpers
     - `init()` loads tasks from `StorageManager.load("tld_tasks")`; falls back to `[]`; calls `render()`
     - `render()` rebuilds the task list DOM in ascending `insertedAt` order; each item renders text, a complete-toggle checkbox, an edit button, and a delete button
     - `normalize(text)` trims, collapses internal whitespace to single space, and lowercases
@@ -102,7 +102,7 @@ Build a single-page dashboard using HTML5, CSS3, and Vanilla JavaScript followin
     - `persist()` calls `StorageManager.save("tld_tasks", tasks)`
     - _Requirements: 2.1, 2.11, 3.1_
 
-  - [~] 6.2 Implement `TaskList.addTask(text)` with validation and duplicate prevention
+  - [x] 6.2 Implement `TaskList.addTask(text)` with validation and duplicate prevention
     - Validate non-empty/non-whitespace (show inline Bahasa Indonesia error; return early)
     - Validate max 200 non-whitespace characters (show inline Bahasa Indonesia error; return early)
     - Check `isDuplicate(normalize(text))`; show inline Bahasa Indonesia error and return early if true
@@ -131,12 +131,12 @@ Build a single-page dashboard using HTML5, CSS3, and Vanilla JavaScript followin
     - Construct pairs `(a, b)` where `normalize(a) === normalize(b)`; after adding `a`, assert adding `b` is rejected and `tasks` is unchanged
     - _Requirements: 3.1, 3.2, 3.3_
 
-  - [~] 6.6 Implement `TaskList.toggleComplete(id)`, `deleteTask(id)`
+  - [x] 6.6 Implement `TaskList.toggleComplete(id)`, `deleteTask(id)`
     - `toggleComplete(id)` flips `task.completed` on the matching task, applies/removes strikethrough style, calls `persist()` and `render()`
     - `deleteTask(id)` removes the task from the array, calls `persist()` and `render()`
     - _Requirements: 2.3, 2.4, 2.9_
 
-  - [~] 6.7 Implement `TaskList.startEdit(id)`, `confirmEdit(id, newText)`, `cancelEdit(id)`
+  - [x] 6.7 Implement `TaskList.startEdit(id)`, `confirmEdit(id, newText)`, `cancelEdit(id)`
     - `startEdit(id)` replaces the text `<span>` with an `<input>` pre-filled with the current text
     - `cancelEdit(id)` restores the original `<span>` display without modifying the task
     - `confirmEdit(id, newText)`: validate non-empty/non-whitespace; validate max 200 chars; check `isDuplicate(normalize(newText), id)` to exclude self; on success update `task.text`, call `persist()` and `render()`; on failure show inline Bahasa Indonesia error and keep the edit field open
@@ -167,11 +167,11 @@ Build a single-page dashboard using HTML5, CSS3, and Vanilla JavaScript followin
     - Test: cancel edit → original text restored
     - _Requirements: 2.1–2.11, 3.1–3.5_
 
-- [~] 7. Checkpoint — task module complete
+- [x] 7. Checkpoint — task module complete
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 8. Implement PomodoroTimer
-  - [~] 8.1 Implement `PomodoroTimer` with `init()`, `start()`, `pause()`, `reset()`, `tick()`, `complete()`, `render()`, and `formatTime(seconds)` methods
+- [x] 8. Implement PomodoroTimer
+  - [x] 8.1 Implement `PomodoroTimer` with `init()`, `start()`, `pause()`, `reset()`, `tick()`, `complete()`, `render()`, and `formatTime(seconds)` methods
     - `init()` sets `remaining = 1500`, `state = "idle"`, calls `render()`
     - `start()` ignores call when `state === "running"` (Requirement 4.10); records absolute end timestamp as `Date.now() + remaining * 1000`; starts `setInterval` calling `tick()` every 1 second; sets `state = "running"`; calls `render()`
     - `tick()` derives `remaining` from `endTimestamp - Date.now()` (avoids drift); if `remaining <= 0` calls `complete()`; else calls `render()`
@@ -205,8 +205,8 @@ Build a single-page dashboard using HTML5, CSS3, and Vanilla JavaScript followin
     - Test: calling `start()` while already running is silently ignored
     - _Requirements: 4.1, 4.3, 4.4, 4.6, 4.7, 4.10_
 
-- [ ] 9. Implement QuickLinkManager
-  - [~] 9.1 Implement `QuickLinkManager` with `init()`, `render()`, `addLink(label, url)`, `openLink(id)`, `deleteLink(id)`, `normalizeUrl(url)`, and `persist()` methods
+- [x] 9. Implement QuickLinkManager
+  - [x] 9.1 Implement `QuickLinkManager` with `init()`, `render()`, `addLink(label, url)`, `openLink(id)`, `deleteLink(id)`, `normalizeUrl(url)`, and `persist()` methods
     - `init()` loads links from `StorageManager.load("tld_links")`; falls back to `[]`; calls `render()`
     - `render()` rebuilds the quick-links grid; each item shows the label, an open button, and a delete button
     - `addLink(label, url)`: validate non-empty label (≤50 chars) and non-empty URL; show per-field Bahasa Indonesia error messages on failure; reject when `links.length >= 20`; call `normalizeUrl(url)`; create a `QuickLink` object with `crypto.randomUUID()`, trimmed label, and normalized URL; push to `links`; call `persist()`; call `render()`
@@ -240,16 +240,16 @@ Build a single-page dashboard using HTML5, CSS3, and Vanilla JavaScript followin
     - Test: `deleteLink` removes the entry and calls `persist()`
     - _Requirements: 5.1, 5.2, 5.5, 5.6, 5.7, 5.8_
 
-- [~] 10. Checkpoint — feature modules complete
+- [x] 10. Checkpoint — feature modules complete
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 11. Implement App orchestrator and wire all modules
-  - [~] 11.1 Implement `App.init()` calling each module's `init()` in the correct order from the design
+- [x] 11. Implement App orchestrator and wire all modules
+  - [x] 11.1 Implement `App.init()` calling each module's `init()` in the correct order from the design
     - Order: `StorageManager.init()` → `ThemeManager.init()` → `ClockDisplay.init()` → `GreetingDisplay.init()` → `TaskList.init()` → `PomodoroTimer.init()` → `QuickLinkManager.init()`
     - Register `document.addEventListener("DOMContentLoaded", App.init)`
     - _Requirements: 7.3, 8.5_
 
-  - [~] 11.2 Wire remaining cross-module interactions
+  - [x] 11.2 Wire remaining cross-module interactions
     - Theme toggle button event → `ThemeManager.toggle()`
     - Name input submit event → `GreetingDisplay.updateName(value)`
     - Task add form submit → `TaskList.addTask(inputValue)`
@@ -259,25 +259,25 @@ Build a single-page dashboard using HTML5, CSS3, and Vanilla JavaScript followin
     - Quick link open/delete events (use event delegation on the links grid container)
     - _Requirements: 2.3, 2.4, 2.5, 2.8, 2.9, 4.3, 4.4, 4.6, 5.3, 5.4, 7.2_
 
-- [ ] 12. Implement CSS responsive layout and visual design
-  - [~] 12.1 Build the complete CSS in `css/style.css`
+- [x] 12. Implement CSS responsive layout and visual design
+  - [x] 12.1 Build the complete CSS in `css/style.css`
     - Implement the `[data-theme="light"]` and `[data-theme="dark"]` custom-property blocks with the exact color values from the design
     - Add a CSS reset and base typography: body text ≥16px, H1 ≥24px, H2 ≥20px, H3 ≥16px with distinct style from body
     - Add smooth CSS transitions (150–400ms) for theme switching, task-completion strikethrough, and hover states on buttons, links, and list items
     - Ensure all normal text (< 18px / 14px bold) meets 4.5:1 contrast and large text meets 3:1 contrast in both themes
     - _Requirements: 9.2, 9.3, 9.4, 7.6_
 
-  - [~] 12.2 Implement responsive layout breakpoints
+  - [x] 12.2 Implement responsive layout breakpoints
     - Mobile (≥320px): single-column stacked layout, no horizontal scrolling
     - Tablet (≥768px): two-column grid for the main panels
     - Desktop (≥1024px): wider layout with optimized spacing
     - _Requirements: 9.1_
 
-- [~] 13. Checkpoint — full application wired and styled
+- [x] 13. Checkpoint — full application wired and styled
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 14. Set up test framework and write integration/smoke tests
-  - [~] 14.1 Set up Vitest (or Jest) with jsdom and fast-check
+- [x] 14. Set up test framework and write integration/smoke tests
+  - [x] 14.1 Set up Vitest (or Jest) with jsdom and fast-check
     - Create `package.json` with `vitest`, `jsdom`, and `fast-check` as dev dependencies
     - Configure test environment to `jsdom` in `vite.config.js` (or `jest.config.js`)
     - Create `tests/` directory and an initial `tests/setup.js` that stubs `localStorage` and `window.matchMedia`
@@ -290,7 +290,7 @@ Build a single-page dashboard using HTML5, CSS3, and Vanilla JavaScript followin
     - Test: Pomodoro UI shows Pause button when `state === "running"` and Start button when `state !== "running"`
     - _Requirements: 7.2, 8.5, 4.8, 4.9_
 
-- [~] 15. Final checkpoint — all tests pass
+- [ ] 15. Final checkpoint — all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes

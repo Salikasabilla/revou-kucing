@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Todo Life Dashboard — manajemen tugas harian, timer Pomodoro, tautan cepat, dan jam real-time.">
+  <title>Todo Life Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- LocalStorage unavailable banner (hidden by default, shown by StorageManager) -->
+  <div id="storage-warning" class="banner banner--warning" hidden aria-live="polite" role="alert">
+    Penyimpanan lokal tidak tersedia. Data tidak akan disimpan setelah halaman ditutup.
+  </div>
+
+  <!-- ============================================================
+       Header: clock, greeting, theme toggle, custom name input
+       ============================================================ -->
+  <header class="header" role="banner">
+
+    <!-- Clock section -->
+    <div class="header__clock" aria-label="Jam dan tanggal saat ini">
+      <span id="clock-date" class="clock__date" aria-live="polite"></span>
+      <span id="clock-time" class="clock__time" aria-live="polite"></span>
+    </div>
+
+    <!-- Greeting section -->
+    <div class="header__greeting" aria-live="polite">
+      <span id="greeting-text" class="greeting__text"></span>
+    </div>
+
+    <!-- Controls: name input + theme toggle -->
+    <div class="header__controls">
+
+      <!-- Custom name form -->
+      <form id="name-form" class="name-form" aria-label="Ubah nama tampilan">
+        <label for="name-input" class="sr-only">Nama tampilan</label>
+        <input
+          id="name-input"
+          type="text"
+          class="input"
+          placeholder="Nama Anda (opsional)"
+          maxlength="50"
+          autocomplete="off"
+          aria-label="Masukkan nama Anda"
+        >
+        <button type="submit" class="btn btn--secondary btn--small">Simpan</button>
+      </form>
+
+      <!-- Theme toggle -->
+      <button
+        id="theme-toggle"
+        class="btn btn--icon"
+        type="button"
+        aria-label="Ganti tema terang/gelap"
+        title="Ganti tema"
+      >
+        <span id="theme-icon" aria-hidden="true">🌙</span>
+      </button>
+
+    </div>
+  </header>
+
+  <!-- ============================================================
+       Main content grid: task list, pomodoro, quick links
+       ============================================================ -->
+  <main class="main" role="main">
+
+    <!-- --------------------------------------------------------
+         Panel 1: Task List
+         -------------------------------------------------------- -->
+    <section class="panel panel--tasks" aria-labelledby="task-panel-title">
+      <h2 id="task-panel-title" class="panel__title">Daftar Tugas</h2>
+
+      <!-- Add task form -->
+      <form id="task-form" class="task-form" aria-label="Tambah tugas baru" novalidate>
+        <label for="task-input" class="sr-only">Tugas baru</label>
+        <input
+          id="task-input"
+          type="text"
+          class="input"
+          placeholder="Tambah tugas baru…"
+          autocomplete="off"
+          aria-label="Masukkan tugas baru"
+          aria-describedby="task-error"
+        >
+        <button type="submit" class="btn btn--primary btn--small">Tambah</button>
+      </form>
+
+      <!-- Inline validation error -->
+      <p id="task-error" class="error-message" hidden aria-live="polite" role="alert"></p>
+
+      <!-- Task list -->
+      <ul id="task-list" class="task-list" aria-label="Daftar tugas" aria-live="polite">
+        <!-- Populated by TaskList.render() -->
+      </ul>
+    </section>
+
+    <!-- --------------------------------------------------------
+         Panel 2: Pomodoro Timer
+         -------------------------------------------------------- -->
+    <section class="panel panel--pomodoro" aria-labelledby="pomodoro-panel-title">
+      <h2 id="pomodoro-panel-title" class="panel__title">Timer Pomodoro</h2>
+
+      <!-- Timer display -->
+      <div
+        id="pomodoro-display"
+        class="pomodoro__display"
+        role="timer"
+        aria-live="off"
+        aria-label="Sisa waktu Pomodoro"
+      >
+        25:00
+      </div>
+
+      <!-- Completion notification -->
+      <p
+        id="pomodoro-notification"
+        class="notification notification--success"
+        hidden
+        aria-live="assertive"
+        role="status"
+      ></p>
+
+      <!-- Controls -->
+      <div class="pomodoro__controls" role="group" aria-label="Kontrol timer Pomodoro">
+        <button id="pomodoro-start" class="btn btn--primary" type="button" aria-label="Mulai timer">
+          ▶ Mulai
+        </button>
+        <button id="pomodoro-pause" class="btn btn--secondary" type="button" hidden aria-label="Jeda timer">
+          ⏸ Jeda
+        </button>
+        <button id="pomodoro-reset" class="btn btn--secondary" type="button" aria-label="Atur ulang timer">
+          ↺ Reset
+        </button>
+      </div>
+    </section>
+
+    <!-- --------------------------------------------------------
+         Panel 3: Quick Links
+         -------------------------------------------------------- -->
+    <section class="panel panel--links" aria-labelledby="links-panel-title">
+      <h2 id="links-panel-title" class="panel__title">Tautan Cepat</h2>
+
+      <!-- Add link form -->
+      <form id="link-form" class="link-form" aria-label="Tambah tautan cepat baru" novalidate>
+
+        <div>
+          <label for="link-label-input" class="sr-only">Label tautan</label>
+          <input
+            id="link-label-input"
+            type="text"
+            class="input"
+            placeholder="Label (mis. GitHub)"
+            maxlength="50"
+            autocomplete="off"
+            aria-label="Label tautan"
+            aria-describedby="link-label-error"
+          >
+          <p id="link-label-error" class="error-message" hidden aria-live="polite" role="alert"></p>
+        </div>
+
+        <div>
+          <label for="link-url-input" class="sr-only">URL tautan</label>
+          <input
+            id="link-url-input"
+            type="text"
+            class="input"
+            placeholder="URL (mis. github.com)"
+            autocomplete="off"
+            aria-label="URL tautan"
+            aria-describedby="link-url-error"
+          >
+          <p id="link-url-error" class="error-message" hidden aria-live="polite" role="alert"></p>
+        </div>
+
+        <p id="link-limit-error" class="error-message" hidden aria-live="polite" role="alert"></p>
+
+        <button type="submit" class="btn btn--primary btn--small">Tambah Tautan</button>
+      </form>
+
+      <!-- Links grid -->
+      <div id="links-grid" class="links-grid" aria-label="Daftar tautan cepat" aria-live="polite">
+        <!-- Populated by QuickLinkManager.render() -->
+      </div>
+    </section>
+
+  </main>
+
+  <script src="js/app.js" defer></script>
+</body>
+</html>
